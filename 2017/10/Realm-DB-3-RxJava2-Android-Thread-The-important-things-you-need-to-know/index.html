@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="If you use Realm DB in your project, the multiple threading issues would makeyou a headache. The official documentation shows:  The only limitation is that you cannot randomly pass Realm objects betwe">
+<meta name="keywords" content="Android,RxJava,Realm,Multithreading">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Realm DB 3, RxJava2, Android, Thread. The important things you need to know">
+<meta property="og:url" content="http://eetech.github.io/2017/10/Realm-DB-3-RxJava2-Android-Thread-The-important-things-you-need-to-know/index.html">
+<meta property="og:site_name" content="Patrick Yin&#39;s Blog">
+<meta property="og:description" content="If you use Realm DB in your project, the multiple threading issues would makeyou a headache. The official documentation shows:  The only limitation is that you cannot randomly pass Realm objects betwe">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/600/1*9Lwgxzh3k5e4H5K3LSLSVw.png">
+<meta property="og:updated_time" content="2018-04-01T09:26:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Realm DB 3, RxJava2, Android, Thread. The important things you need to know">
+<meta name="twitter:description" content="If you use Realm DB in your project, the multiple threading issues would makeyou a headache. The official documentation shows:  The only limitation is that you cannot randomly pass Realm objects betwe">
+<meta name="twitter:image" content="https://cdn-images-1.medium.com/max/600/1*9Lwgxzh3k5e4H5K3LSLSVw.png">
+<meta name="twitter:creator" content="@patrickrayyin">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>Realm DB 3, RxJava2, Android, Thread. The important things you need to know</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/atom.xml" title="Patrick Yin&#39;s Blog" type="application/atom+xml" />
+    
+</head>
+
+<body class="max-width mx-auto px3">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/projects_url">Open-Source Projects</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2017/10/The-issues-of-mocking-Realm-in-Java-Kotlin-unit-test/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://eetech.github.io/2017/10/Realm-DB-3-RxJava2-Android-Thread-The-important-things-you-need-to-know/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://eetech.github.io/2017/10/Realm-DB-3-RxJava2-Android-Thread-The-important-things-you-need-to-know/&text=Realm DB 3, RxJava2, Android, Thread. The important things you need to know"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://eetech.github.io/2017/10/Realm-DB-3-RxJava2-Android-Thread-The-important-things-you-need-to-know/&title=Realm DB 3, RxJava2, Android, Thread. The important things you need to know"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://eetech.github.io/2017/10/Realm-DB-3-RxJava2-Android-Thread-The-important-things-you-need-to-know/&is_video=false&description=Realm DB 3, RxJava2, Android, Thread. The important things you need to know"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Realm DB 3, RxJava2, Android, Thread. The important things you need to know&body=Check out this article: http://eetech.github.io/2017/10/Realm-DB-3-RxJava2-Android-Thread-The-important-things-you-need-to-know/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://eetech.github.io/2017/10/Realm-DB-3-RxJava2-Android-Thread-The-important-things-you-need-to-know/&title=Realm DB 3, RxJava2, Android, Thread. The important things you need to know"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://eetech.github.io/2017/10/Realm-DB-3-RxJava2-Android-Thread-The-important-things-you-need-to-know/&title=Realm DB 3, RxJava2, Android, Thread. The important things you need to know"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://eetech.github.io/2017/10/Realm-DB-3-RxJava2-Android-Thread-The-important-things-you-need-to-know/&title=Realm DB 3, RxJava2, Android, Thread. The important things you need to know"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://eetech.github.io/2017/10/Realm-DB-3-RxJava2-Android-Thread-The-important-things-you-need-to-know/&title=Realm DB 3, RxJava2, Android, Thread. The important things you need to know"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://eetech.github.io/2017/10/Realm-DB-3-RxJava2-Android-Thread-The-important-things-you-need-to-know/&name=Realm DB 3, RxJava2, Android, Thread. The important things you need to know&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Realm DB 3, RxJava2, Android, Thread. The important things you need to know
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Patrick Yin's Blog</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2017-10-17T08:23:16.000Z" itemprop="datePublished">17/10/2017</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Android/">Android</a>, <a class="tag-link" href="/tags/Multithreading/">Multithreading</a>, <a class="tag-link" href="/tags/Realm/">Realm</a>, <a class="tag-link" href="/tags/RxJava/">RxJava</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>If you use Realm DB in your project, the multiple threading issues would make<br>you a headache.</p>
+<p>The official documentation shows:</p>
+<blockquote>
+<p>The only limitation is that you cannot randomly pass Realm objects between<br>threads.<strong> If you need the same data on another thread, you need to query for<br>that data on the that other thread.</strong> Furthermore, you can observe the changes<br>using Realms reactive architecture. Remember, all objects are kept up to date<br>between threads — Realm will notify you when the data changes.</p>
+</blockquote>
+<p><img src="https://cdn-images-1.medium.com/max/600/1*9Lwgxzh3k5e4H5K3LSLSVw.png" alt=""></p>
+<p>Most time, you would like to fetch a whole bunch items from Realm DB and then<br>show them on the UI, so if you try to do these operations on <code>Main Thread</code>, it<br>would work well. But……. You shouldn’t do IO operations on <code>Main Thread</code>. It<br>would freeze your app’s UI for a while if you do some large IO transactions on<br><code>Main Thread</code>. What would you do?</p>
+<p><strong>Use Realms notifications?</strong></p>
+<blockquote>
+<p>All of the code snippets are written with Kotlin.</p>
+</blockquote>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> realmListener = <span class="keyword">object</span> : RealmChangeListener &#123;</span><br><span class="line">  <span class="function"><span class="keyword">fun</span> <span class="title">onChange</span><span class="params">(realm: <span class="type">Realm</span>)</span></span> &#123;</span><br><span class="line">    <span class="comment">// ... do something with the updates (UI, etc.) ...</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">realm.addChangeListener(realmListener)</span><br></pre></td></tr></table></figure>
+<p>This is not a good idea, you don’t want to add these callback code snippets into<br>your app because you build your app with RxJava 2.</p>
+<p><strong>Use Realms reactive architecture?</strong></p>
+<p>Even though Realm can provide observable or flowable, it is still hard to manage<br>the thread if you mix some your own Rx operators and try to invoke<br><code>subscribeOn()</code> to change the thread, your Realm instance and Realm results<br>instance’s working thread won’t be your expectation, the results instance would<br>be on a separate thread and you couldn’t control it, you may get <code>Realm objects
+can only be accessed on the thread they were created.</code> from time to time if you<br>try to invoke <code>map()</code> or some other operators after it.</p>
+<p><strong>Create your own RxJava2 repository observable, and mix your current Rx<br>operators?</strong></p>
+<p><strong>I would say, Yes!</strong></p>
+<p>You might have your own repository observable before you decide to implement<br>Realm DB as your local storage DB, etc:</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">articleObservable.filter &#123; article -&gt; article.title != <span class="literal">null</span>&#125;</span><br><span class="line">    .flatMap &#123; article -&gt; article.comments&#125;</span><br><span class="line">    .map &#123; comment -&gt; comment.createdDate&#125;</span><br><span class="line">    .subscribeOn(Schedulers.io())</span><br><span class="line">    .observeOn(AndroidSchedulers.mainThread())</span><br><span class="line">    .subscribe(observer)</span><br></pre></td></tr></table></figure>
+<p><strong>Now we should replace the normal </strong><code>articleObservable</code><strong> with a Realm version
+</strong><code>articleObservable</code><strong>:</strong></p>
+<p>How do you create an <code>Observable</code>? The simplest way is using<br><code>Observable.from()</code>. Let’s do it:</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> articleRealmObservable = Observable.from(</span><br><span class="line">   Realm.getDefaultInstance().where(Article::<span class="class"><span class="keyword">class</span>).<span class="title">findAll</span></span>()</span><br><span class="line">)</span><br><span class="line">articleRealmObservable.filter &#123; article -&gt; article.title != <span class="literal">null</span>&#125;</span><br><span class="line">    .flatMap &#123; article -&gt; article.comments&#125;</span><br><span class="line">    .map &#123; comment -&gt; comment.createdDate&#125;</span><br><span class="line">    .subscribeOn(Schedulers.io())</span><br><span class="line">    .observeOn(AndroidSchedulers.mainThread())</span><br><span class="line">    .subscribe(observer)</span><br></pre></td></tr></table></figure>
+<p>Run it…</p>
+<p><strong>Oh NO!</strong><br> there is something wrong:<br> <code>Realm objects can only be accessed
+on the thread they were created.</code> cause on the <code>filter()</code> line.</p>
+<p>What causes this error? <br> We pass Realm operations as a parameter to<br><code>Observable.from()</code>, its working thread still couldn’t be changed to the IO<br>thread even though we invoked <code>.subscribeOn(Scheduler.io()</code>. That means<br><code>Realm.getDefaultInstance().where(Article::class).findAll()</code> works on the thread<br>which you write the code on(in the example, it is on <code>Main Thread</code>). and all of<br>other Rx Operators(e.g. <code>filter()</code>, <code>map()</code>, etc.) work on <code>IO Thread</code>, and<br>realm object cannot be passed between threads.</p>
+<p><strong>The correct way is</strong> to create an <code>Observable</code> manually, put the Realm<br>operation statement into the <code>ObservableEmitter</code>. After that, the<br><code>subscribeOn()</code> will affect the Realm object’s working thread.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> articleRealmObservable = Observable.create &#123; emitter -&gt;</span><br><span class="line">    <span class="keyword">val</span> realm = Realm.getDefaultInstance()</span><br><span class="line">    <span class="keyword">val</span> articles = realm.where(Article::<span class="class"><span class="keyword">class</span>).<span class="title">findAll</span></span>()</span><br><span class="line">    <span class="keyword">if</span> (articles.size &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        articles.forEach &#123; emitter.onNext(it) &#125;</span><br><span class="line">        emitter.onComplete()</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        emitter.onError(IndexOutOfBoundsException())</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">articleRealmObservable.filter &#123; article -&gt; article.title != <span class="literal">null</span>&#125;</span><br><span class="line">    .flatMap &#123; article -&gt; article.comments&#125;</span><br><span class="line">    .map &#123; comment -&gt; comment.createdDate&#125;</span><br><span class="line">    .subscribeOn(Schedulers.io())</span><br><span class="line">    .observeOn(AndroidSchedulers.mainThread())</span><br><span class="line">    .subscribe(observer)</span><br></pre></td></tr></table></figure>
+<p>🎉🎉🎉🎉🎉🎉🎉🎉</p>
+<p>Follow me at <a href="https://medium.com/@pyin001" target="_blank" rel="noopener">medium</a> if you like this post ;-)</p>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/projects_url">Open-Source Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://eetech.github.io/2017/10/Realm-DB-3-RxJava2-Android-Thread-The-important-things-you-need-to-know/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://eetech.github.io/2017/10/Realm-DB-3-RxJava2-Android-Thread-The-important-things-you-need-to-know/&text=Realm DB 3, RxJava2, Android, Thread. The important things you need to know"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://eetech.github.io/2017/10/Realm-DB-3-RxJava2-Android-Thread-The-important-things-you-need-to-know/&title=Realm DB 3, RxJava2, Android, Thread. The important things you need to know"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://eetech.github.io/2017/10/Realm-DB-3-RxJava2-Android-Thread-The-important-things-you-need-to-know/&is_video=false&description=Realm DB 3, RxJava2, Android, Thread. The important things you need to know"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Realm DB 3, RxJava2, Android, Thread. The important things you need to know&body=Check out this article: http://eetech.github.io/2017/10/Realm-DB-3-RxJava2-Android-Thread-The-important-things-you-need-to-know/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://eetech.github.io/2017/10/Realm-DB-3-RxJava2-Android-Thread-The-important-things-you-need-to-know/&title=Realm DB 3, RxJava2, Android, Thread. The important things you need to know"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://eetech.github.io/2017/10/Realm-DB-3-RxJava2-Android-Thread-The-important-things-you-need-to-know/&title=Realm DB 3, RxJava2, Android, Thread. The important things you need to know"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://eetech.github.io/2017/10/Realm-DB-3-RxJava2-Android-Thread-The-important-things-you-need-to-know/&title=Realm DB 3, RxJava2, Android, Thread. The important things you need to know"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://eetech.github.io/2017/10/Realm-DB-3-RxJava2-Android-Thread-The-important-things-you-need-to-know/&title=Realm DB 3, RxJava2, Android, Thread. The important things you need to know"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://eetech.github.io/2017/10/Realm-DB-3-RxJava2-Android-Thread-The-important-things-you-need-to-know/&name=Realm DB 3, RxJava2, Android, Thread. The important things you need to know&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 Patrick Yin
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/projects_url">Open-Source Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/fontawesome-all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m) {i['GoogleAnalyticsObject']=r;i[r]=i[r]||function() {
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-90309717-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'patrick-yins-blog';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+

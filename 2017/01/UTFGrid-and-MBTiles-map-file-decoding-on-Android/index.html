@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="The following section discusses the problems, with regard to UTFGrid data inside of MBTiles file and solution. ProblemWe need to get the data of the grids for showing the popup window info and drawing">
+<meta name="keywords" content="Android,MBTiles,map,UTFGrid">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UTFGrid and MBTiles map file decoding on Android">
+<meta property="og:url" content="http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/index.html">
+<meta property="og:site_name" content="Patrick Yin&#39;s Blog">
+<meta property="og:description" content="The following section discusses the problems, with regard to UTFGrid data inside of MBTiles file and solution. ProblemWe need to get the data of the grids for showing the popup window info and drawing">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/450px-Latlon_to_tile.png">
+<meta property="og:updated_time" content="2018-04-01T05:24:11.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="UTFGrid and MBTiles map file decoding on Android">
+<meta name="twitter:description" content="The following section discusses the problems, with regard to UTFGrid data inside of MBTiles file and solution. ProblemWe need to get the data of the grids for showing the popup window info and drawing">
+<meta name="twitter:image" content="http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/450px-Latlon_to_tile.png">
+<meta name="twitter:creator" content="@patrickrayyin">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>UTFGrid and MBTiles map file decoding on Android</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/atom.xml" title="Patrick Yin&#39;s Blog" type="application/atom+xml" />
+    
+</head>
+
+<body class="max-width mx-auto px3">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/projects_url">Open-Source Projects</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2017/02/Convert-MBTiles-map-to-OSMDroid-Offline-SQLite-map-format/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/&text=UTFGrid and MBTiles map file decoding on Android"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/&title=UTFGrid and MBTiles map file decoding on Android"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/&is_video=false&description=UTFGrid and MBTiles map file decoding on Android"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=UTFGrid and MBTiles map file decoding on Android&body=Check out this article: http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/&title=UTFGrid and MBTiles map file decoding on Android"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/&title=UTFGrid and MBTiles map file decoding on Android"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/&title=UTFGrid and MBTiles map file decoding on Android"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/&title=UTFGrid and MBTiles map file decoding on Android"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/&name=UTFGrid and MBTiles map file decoding on Android&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#Problem"><span class="toc-number">1.</span> <span class="toc-text">Problem</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Solution"><span class="toc-number">2.</span> <span class="toc-text">Solution</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Principle"><span class="toc-number">3.</span> <span class="toc-text">Principle</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Resources"><span class="toc-number">4.</span> <span class="toc-text">Resources</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        UTFGrid and MBTiles map file decoding on Android
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Patrick Yin's Blog</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2017-01-26T04:54:43.000Z" itemprop="datePublished">26/01/2017</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Android/">Android</a>, <a class="tag-link" href="/tags/MBTiles/">MBTiles</a>, <a class="tag-link" href="/tags/UTFGrid/">UTFGrid</a>, <a class="tag-link" href="/tags/map/">map</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>The following section discusses the problems, with regard to UTFGrid data inside of MBTiles file and solution.</p>
+<h4 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h4><p>We need to get the data of the grids for showing the popup window info and drawing the popup window on MapView when user tap a clickable grid, but MapBox Android Library doesn’t provide any functions for getting grid data from MBTile File(they provide the functions in their iOS and JavaScript SDK).</p>
+<h4 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h4><p>(Not-Completed, change to use OSMDroid SDK with OSMDroid SQLite map and GeoJSON format, please refer to OSMDroid)</p>
+<p>We should find out the data and decode it from MBTiles file directly(without MapBox Android library) by ourselves.</p>
+<h4 id="Principle"><a href="#Principle" class="headerlink" title="Principle"></a>Principle</h4><ol>
+<li><p>Open the MBTiles file with SQLiteDatabase Class</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SQLiteDatabase db = SQLiteDatabase.openDatabase(<span class="keyword">this</span>.fileName, <span class="keyword">null</span>, SQLiteDatabase.OPEN_READONLY);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Calculate the tile_row, tile_column, zoom_level with the coordinate which user tap. we can get the coordinate from MapView with mapView.getZoomLevel(), mapView.getLatitude(), mapView.getLongitude() (These methods are MapView built-in methods), and then use the specific algorithm to calculate it. And also you can find the formula below:</p>
+<img src="/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/450px-Latlon_to_tile.png" title="Formula for the conversion of the latitude, longitude to tile_x, tile_y">
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> TilePosition <span class="title">getTilePosition</span><span class="params">(<span class="keyword">float</span> zoomLevel, <span class="keyword">double</span> latitude, <span class="keyword">double</span> longitude)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> tileZoom = round(zoomLevel);</span><br><span class="line">    <span class="keyword">int</span> tileX = (<span class="keyword">int</span>) ((longitude + <span class="number">180.0</span>) / <span class="number">360.0</span> * pow(<span class="number">2.0</span>, tileZoom));</span><br><span class="line">    <span class="keyword">int</span> tileY = (<span class="keyword">int</span>)((<span class="number">1.0</span> - log(tan(latitude * PI / <span class="number">180.0</span>) + <span class="number">1.0</span> / cos(latitude * PI / <span class="number">180.0</span>)) / PI) / <span class="number">2.0</span> * pow(<span class="number">2.0</span>, tileZoom));</span><br><span class="line">    tileY = (<span class="keyword">int</span>) (pow(<span class="number">2.0</span>, tileZoom) - tileY - <span class="number">1.0</span>); <span class="comment">// flip Y, this is only for mbtiles file</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> TilePosition(tileZoom, tileX, tileY);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Here is the structure of the TilePosition:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Created by patrickyin on 23/1/17.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TilePosition</span> <span class="keyword">extends</span> <span class="title">Object</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> zoom;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> x;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> y;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TilePosition</span><span class="params">(<span class="keyword">int</span> zoom, <span class="keyword">int</span> x, <span class="keyword">int</span> y)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.zoom = zoom;</span><br><span class="line">        <span class="keyword">this</span>.x = x;</span><br><span class="line">        <span class="keyword">this</span>.y = y;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getZoom</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> zoom;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getX</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getY</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> y;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object o)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span> == o) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">if</span> (o == <span class="keyword">null</span> || getClass() != o.getClass()) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">        TilePosition that = (TilePosition) o;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (zoom != that.zoom) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">if</span> (x != that.x) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">return</span> y == that.y;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> result = zoom;</span><br><span class="line">        result = <span class="number">31</span> * result + x;</span><br><span class="line">        result = <span class="number">31</span> * result + y;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Use tile_row, tile_column, zoom_level to get BLOB data of UTFGrid field(field’s name is ‘grid’ in the view ‘grids’ in MBTiles file)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">byte</span>[] getGridBLOBData(TilePosition tilePosition) &#123;</span><br><span class="line">    String[] columns = &#123; <span class="string">"grid"</span> &#125;;</span><br><span class="line">    String[] args = &#123; Integer.toString(tilePosition.getZoom()), Integer.toString(tilePosition.getX()), Integer.toString(tilePosition.getY()) &#125;;</span><br><span class="line">    Cursor cursor = <span class="keyword">this</span>.db.query(<span class="string">"grids"</span>, columns, <span class="string">"zoom_level=? AND tile_column=? AND tile_row=?"</span>, args, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">    <span class="keyword">if</span> (cursor == <span class="keyword">null</span> || cursor.getCount() == <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    cursor.moveToFirst();</span><br><span class="line">    <span class="keyword">byte</span>[] data = cursor.getBlob(<span class="number">0</span>);</span><br><span class="line">    cursor.close();</span><br><span class="line">    <span class="keyword">return</span> data;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Once we get BLOB data, we should decompress the data with Zlib library, because the BLOB data is gzipped bytecode.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">byte</span>[] decompress(<span class="keyword">byte</span>[] compressedData)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(compressedData == <span class="keyword">null</span>) <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    Inflater inflater = <span class="keyword">new</span> Inflater();</span><br><span class="line">    inflater.setInput(compressedData);</span><br><span class="line">    ByteArrayOutputStream outputStream = <span class="keyword">new</span> ByteArrayOutputStream(compressedData.length);</span><br><span class="line">    <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">    <span class="keyword">while</span> (!inflater.finished()) &#123;</span><br><span class="line">        <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            count = inflater.inflate(buffer);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (DataFormatException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        outputStream.write(buffer, <span class="number">0</span>, count);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        outputStream.close();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">byte</span>[] output = outputStream.toByteArray();</span><br><span class="line">    inflater.end();</span><br><span class="line">    <span class="keyword">return</span> output;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Convert BLOB data to JSON object</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">JSONObject utfGridJSON = <span class="keyword">new</span> JSONObject(<span class="keyword">new</span> String(utfGrid));</span><br><span class="line">JSONArray grid = utfGridJSON.getJSONArray(<span class="string">"grid"</span>);</span><br><span class="line">JSONArray keys = utfGridJSON.getJSONArray(<span class="string">"keys"</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Calculate X and Y(starting from top left at 0 on the specified tile) from global coordinate for the click point.</p>
+</li>
+</ol>
+<h4 id="Resources"><a href="#Resources" class="headerlink" title="Resources"></a>Resources</h4><p><a href="http://wiki.openstreetmap.org/wiki/MBTiles" target="_blank">MbTiles definition</a><br><a href="https://github.com/mapbox/mbtiles-spec" target="_blank">MbTiles specification</a><br><a href="https://www.mapbox.com/blog/how-interactivity-works-utfgrid/" target="_blank">How Interactivity Works with UTFGrid</a><br><a href="https://github.com/mapbox/utfgrid-spec" target="_blank">Specification for UTFGrid</a></p>
+
+  </div>
+</article>
+
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+            <noscript>Please enable JavaScript to view the comments.</noscript>
+        </div>
+    </div>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/projects_url">Open-Source Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#Problem"><span class="toc-number">1.</span> <span class="toc-text">Problem</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Solution"><span class="toc-number">2.</span> <span class="toc-text">Solution</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Principle"><span class="toc-number">3.</span> <span class="toc-text">Principle</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Resources"><span class="toc-number">4.</span> <span class="toc-text">Resources</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/&text=UTFGrid and MBTiles map file decoding on Android"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/&title=UTFGrid and MBTiles map file decoding on Android"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/&is_video=false&description=UTFGrid and MBTiles map file decoding on Android"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=UTFGrid and MBTiles map file decoding on Android&body=Check out this article: http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/&title=UTFGrid and MBTiles map file decoding on Android"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/&title=UTFGrid and MBTiles map file decoding on Android"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/&title=UTFGrid and MBTiles map file decoding on Android"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/&title=UTFGrid and MBTiles map file decoding on Android"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://eetech.github.io/2017/01/UTFGrid-and-MBTiles-map-file-decoding-on-Android/&name=UTFGrid and MBTiles map file decoding on Android&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 Patrick Yin
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Posts</a></li>
+         
+          <li><a href="/projects_url">Open-Source Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/fontawesome-all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+    <script type="text/javascript">
+        (function(i,s,o,g,r,a,m) {i['GoogleAnalyticsObject']=r;i[r]=i[r]||function() {
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-90309717-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+    <script type="text/javascript">
+        var disqus_shortname = 'patrick-yins-blog';
+
+        (function(){
+            var dsq = document.createElement('script');
+            dsq.type = 'text/javascript';
+            dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        }());
+    </script>
+
+
